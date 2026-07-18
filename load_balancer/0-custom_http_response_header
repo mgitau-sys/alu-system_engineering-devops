@@ -1,12 +1,30 @@
 #!/usr/bin/env bash
-#Configuring web01 and web02 to be identical and add custom nginx header 
-sudo apt-get update
-sudo apt-get install -y nginx
+# Installing and configuring Nginx
 
-if ! grep -q "add_header X-Served-By" /etc/nginx/sites-available/default; then
-    sed -i '/location \/ {/a\        add_header X-Served-By $hostname;' \
-    /etc/nginx/sites-available/default
-fi
+set -e
+
+apt-get update
+apt-get install -y nginx
+
+new_config="server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+
+    root /var/www/html;
+    index index.html index.htm index.nginx-debian.html;
+
+    server_name _;
+
+    location / {
+        add_header X-Served-By \$hostname;
+        try_files \$uri \$uri/ =404;
+    }
+}
+"
+
+echo "$new_config" | tee /etc/nginx/sites-available/default > /dev/null
+
 nginx -t
+
 service nginx restart
  
