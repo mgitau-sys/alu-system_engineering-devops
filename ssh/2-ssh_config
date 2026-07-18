@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#confuguring our server to only connect using sshe keys and not password
+#confuguring our server to only connect using ssh keys and not password
 Host *
     IdentityFile ~/.ssh/school
     PasswordAuthentication no
