@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+#Configuring web01 and web02 to be identical and add custom nginx header 
+sudo apt-get update
+sudo apt-get install -y nginx
+
+if ! grep -q "add_header X-Served-By" /etc/nginx/sites-available/default; then
+    sed -i '/location \/ {/a\        add_header X-Served-By $hostname;' \
+    /etc/nginx/sites-available/default
+fi
+nginx -t
+service nginx restart
+ 
