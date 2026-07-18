@@ -1,0 +1,20 @@
+#!/usr/bin bash
+#This scropt installs a load balancer 'haproxy'
+sudo apt-get update
+sudo apt-get install -y haproxy
+if ! grep -q "frontend http_incoming" /etc/haproxy/haproxy.cfg; then
+   cat <<EOF >> /etc/haproxy/haproxy.cfg
+frontend http_incoming
+    bind *:80
+    default_backend http_outgoing
+
+backend http_outgoing
+    balance roundrobin
+    server web-01 34.203.218.227:80 check
+    server web-02 54.163.154.18:80 check
+EOF
+fi
+
+service haproxy restart
+
+
